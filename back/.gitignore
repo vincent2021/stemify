@@ -2,6 +2,7 @@
 pretrained_models/
 raw_data/*.mp3
 output/
+dumb.rdb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
