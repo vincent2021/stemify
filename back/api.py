@@ -11,7 +11,7 @@ from rq import Queue
 #Configuration and Ping route
 
 UPLOAD_FOLDER = 'raw_data'
-OUTPUT_FOLDER = 'output/'
+OUTPUT_FOLDER = 'output'
 ALLOWED_EXTENSIONS = {'mp3'}
 
 def allowed_file(filename):
@@ -32,7 +32,7 @@ def ping_pong():
 #Get stems
 def split_audio(filename, stem):
     song_folder = filename
-    output_dir = Path(OUTPUT_FOLDER + song_folder)
+    output_dir = Path(OUTPUT_FOLDER) / song_folder
     #split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
     q.enqueue(split.split, str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
     if stem == 2:

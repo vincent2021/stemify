@@ -2,13 +2,13 @@ name: stemify
 
 channels:
   - conda-forge
-  - defaults
+  - anaconda
 
 dependencies:
   - python=3.7
   - numpy=1.14.6
   - pandas=0.25.1
-  - spleeter-gpu
+  - spleeter
   - rq
   - redis
   - flask
