@@ -46,15 +46,23 @@
     </v-layout>
     <v-container>
       <div v-if="selectedFile">
-        <v-btn @click="play">Play the original song</v-btn>
+        <v-btn @click="play(0)">Play the original song</v-btn>
       </div>
     </v-container>
-    <v-container id="waveform">
+    <v-container id="waveform0">
     </v-container>
     <v-divider></v-divider>
-    <v-container v-if="selectedFile">
-      <v-container id="waveform0"></v-container>
+    <v-container>
       <v-container id="waveform1"></v-container>
+      <v-btn @click="play(1)">Play Voice</v-btn>
+      <v-container id="waveform2"></v-container>
+      <v-btn @click="play(2)">Play Other</v-btn>
+      <v-container id="waveform3"></v-container>
+      <v-btn @click="play(3)">Play Piano</v-btn>
+      <v-container id="waveform4"></v-container>
+      <v-btn @click="play(4)">Play Drums</v-btn>
+      <v-container id="waveform5"></v-container>
+      <v-btn @click="play(5)">Play Bass</v-btn>
     </v-container>
   </v-container>
 </template>
@@ -67,19 +75,23 @@ export default {
   name: 'Home',
   data() {
     return {
+      publicPath: 'http://52.47.46.54:8080/',
       selectedFile: null,
       stemList: ['2', '4', '5'],
       stem: '2',
       convertFiles: null,
+      waveforms: [],
     };
   },
   mounted() {
     this.$nextTick(() => {
-      this.wavesurfer = WaveSurfer.create({
-        container: '#waveform',
-        waveColor: 'orange',
-        progressColor: 'navy',
-      });
+      for (let i = 0; i <= 5; i += 1) {
+        this.waveforms[i] = WaveSurfer.create({
+          container: '#waveform'.concat(i),
+          waveColor: 'orange',
+          progressColor: 'navy',
+        });
+      }
     });
   },
   methods: {
@@ -94,33 +106,28 @@ export default {
           this.convertFiles = ret.data;
           this.loadOutput(ret.data);
         });
-        this.loadAudioFile(selectedFile);
+        this.loadAudioFile(selectedFile, 0);
       } else {
         this.selectedFile = null;
       }
     },
     loadOutput(files) {
-      const outputDir = 'http://localhost:8080/output/';
-      this.wavesurfer0 = WaveSurfer.create({
-        container: '#waveform0',
-        waveColor: 'orange',
-        progressColor: 'navy',
-      });
+      const outputDir = this.publicPath.concat('output/');
+      this.convertFiles = files;
+      console.log(this.convertFiles);
+      let i = 1;
       Object.values(files).forEach((file) => {
         console.log(outputDir + file);
-        this.wavesurfer0.load(outputDir + file);
-        this.wavesurfer0.playPause();
+        this.waveforms[i].load(outputDir + file);
+        i += 1;
       });
     },
     loadAudioFile(file) {
-      const reader = new FileReader();
-      reader.addEventListener('loadend', () => {
-        this.wavesurfer.load(reader.result);
-      });
-      reader.readAsDataURL(file);
+      this.waveforms[0].loadBlob(file);
     },
-    play() {
-      this.wavesurfer.playPause();
+    play(index) {
+      const player = this.waveforms[index];
+      player.playPause();
     },
   },
 };
