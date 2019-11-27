@@ -54,9 +54,9 @@
     <v-divider></v-divider>
     <v-container>
       <v-container id="waveform1"></v-container>
-      <v-btn @click="play(1)">Play Voice</v-btn>
+      <v-btn @click="play(1)">Play Other</v-btn>
       <v-container id="waveform2"></v-container>
-      <v-btn @click="play(2)">Play Other</v-btn>
+      <v-btn @click="play(2)">Play Voice</v-btn>
       <v-container id="waveform3"></v-container>
       <v-btn @click="play(3)">Play Piano</v-btn>
       <v-container id="waveform4"></v-container>
@@ -75,7 +75,6 @@ export default {
   name: 'Home',
   data() {
     return {
-      publicPath: 'http://52.47.46.54:8080/',
       selectedFile: null,
       stemList: ['2', '4', '5'],
       stem: '2',
@@ -100,7 +99,6 @@ export default {
         const fileFD = new FormData();
         fileFD.append('file', selectedFile);
         fileFD.append('stem', this.stem);
-        console.log(...fileFD);
         api().post('/upload', fileFD).then((ret) => {
           console.log(ret.data);
           this.convertFiles = ret.data;
@@ -112,13 +110,13 @@ export default {
       }
     },
     loadOutput(files) {
-      const outputDir = this.publicPath.concat('output/');
+      const filesApi = 'http://52.47.46.54:5050/file/';
       this.convertFiles = files;
       console.log(this.convertFiles);
       let i = 1;
       Object.values(files).forEach((file) => {
-        console.log(outputDir + file);
-        this.waveforms[i].load(outputDir + file);
+        console.log(filesApi + file);
+        this.waveforms[i].load(filesApi + file);
         i += 1;
       });
     },
