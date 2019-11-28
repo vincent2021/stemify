@@ -54,15 +54,15 @@
     <v-divider></v-divider>
     <v-container>
       <v-container id="waveform1"></v-container>
-      <v-btn @click="play(1)">Play Other</v-btn>
+      <v-btn @click="play(1)">Play {{fileType[1]}}</v-btn>
       <v-container id="waveform2"></v-container>
-      <v-btn @click="play(2)">Play Voice</v-btn>
+      <v-btn @click="play(2)">Play {{fileType[2]}}</v-btn>
       <v-container id="waveform3"></v-container>
-      <v-btn @click="play(3)">Play Piano</v-btn>
+      <v-btn @click="play(3)">Play {{fileType[3]}}</v-btn>
       <v-container id="waveform4"></v-container>
-      <v-btn @click="play(4)">Play Drums</v-btn>
+      <v-btn @click="play(4)">Play {{fileType[4]}}</v-btn>
       <v-container id="waveform5"></v-container>
-      <v-btn @click="play(5)">Play Bass</v-btn>
+      <v-btn @click="play(5)">Play {{fileType[5]}}</v-btn>
     </v-container>
   </v-container>
 </template>
@@ -80,6 +80,7 @@ export default {
       stem: '2',
       convertFiles: null,
       waveforms: [],
+      fileType: [],
     };
   },
   mounted() {
@@ -100,10 +101,11 @@ export default {
         fileFD.append('file', selectedFile);
         fileFD.append('stem', this.stem);
         api().post('/upload', fileFD).then((ret) => {
-          console.log(ret.data);
-          this.convertFiles = ret.data;
-          this.loadOutput(ret.data);
-        });
+          if (ret.status_code !== 404) {
+            this.convertFiles = ret.data;
+            this.loadOutput(ret.data);
+          }
+        }).catch((e) => { console.log(e); });
         this.loadAudioFile(selectedFile, 0);
       } else {
         this.selectedFile = null;
@@ -111,12 +113,10 @@ export default {
     },
     loadOutput(files) {
       const filesApi = 'http://52.47.46.54:5050/file/';
-      this.convertFiles = files;
-      console.log(this.convertFiles);
       let i = 1;
-      Object.values(files).forEach((file) => {
-        console.log(filesApi + file);
-        this.waveforms[i].load(filesApi + file);
+      Object.entries(files).forEach(([key, value]) => {
+        this.waveforms[i].load(filesApi + value);
+        this.fileType[i] = key;
         i += 1;
       });
     },
