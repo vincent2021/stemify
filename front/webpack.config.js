@@ -1,3 +1,3 @@
 module.exports = {
-  stats: "none"
+  stats: 'none',
 };
